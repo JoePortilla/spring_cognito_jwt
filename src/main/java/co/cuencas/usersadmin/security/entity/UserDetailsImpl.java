@@ -43,14 +43,13 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
     }
 
-
     /**
      * Method to build the user using their information
      *
      * @param user user to build
      * @return new user
      */
-    public static UserDetailsImpl build(UserApp user) {
+    public static UserDetailsImpl buildUserDetails(UserApp user) {
         // Generate a list with the user's authorities depending on their role
         // EN LA LISTA DE AUTHORITIES SE PONE EL ROL DEL USUARIO ¿SE PUEDE PONER LAS ACCIONES?
         List<GrantedAuthority> authorities =

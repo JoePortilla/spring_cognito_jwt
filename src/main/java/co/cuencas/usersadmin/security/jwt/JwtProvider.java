@@ -25,7 +25,7 @@ public class JwtProvider {
     @Value(value = "${aws.cognito.jwk}")
     private String jwtUrl;
 
-    // Dentro del payload devuelto viene un claim llamado username (i.e.: "username": "108533294")
+    // Name of the claim in the payload (i.e.: "username": "108533294")
     private static final String USERNAME = "username";
 
     /**
@@ -37,7 +37,7 @@ public class JwtProvider {
     public boolean validateToken(String token) {
         try {
             // Get a verified and decoded JWT
-            getDecodedJwt(token);
+            decodeAndVerifyJwt(token);
             // If the JWT is valid return true
             return true;
         }
@@ -55,7 +55,7 @@ public class JwtProvider {
      */
     public String getUserNameFromToken(String token) {
         // Get a verified and decoded JWT
-        DecodedJWT decodedJWT = getDecodedJwt(token);
+        DecodedJWT decodedJWT = decodeAndVerifyJwt(token);
         // Get the attribute USERNAME from the claim (i.e.: identification) and convert to string
         String userName = decodedJWT.getClaim(USERNAME).toString();
         // Delete the quotation mark in the attribute "username"
@@ -68,7 +68,7 @@ public class JwtProvider {
      * @param token JWT
      * @return A verified and decoded JWT
      */
-    public DecodedJWT getDecodedJwt(String token) {
+    public DecodedJWT decodeAndVerifyJwt(String token) {
         // Split the String and remove Bearer (if exists)
         String tokenWithoutBearer = token.startsWith("Bearer ") ? token.substring("Bearer ".length()) : token;
         // Obtain the URL of the provider

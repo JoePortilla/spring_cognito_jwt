@@ -3,7 +3,7 @@ package co.cuencas.usersadmin.security;
 import co.cuencas.usersadmin.security.jwt.JwtEntryPoint;
 import co.cuencas.usersadmin.security.jwt.JwtProvider;
 import co.cuencas.usersadmin.security.jwt.JwtTokenFilter;
-import co.cuencas.usersadmin.security.service.UserDetailsServiceImpl;
+import co.cuencas.usersadmin.security.service.UseCase.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,14 +25,16 @@ public class MainSecurity {
     private final CorsFilter corsFilter;
     private final JwtEntryPoint jwtEntryPoint;
     private final JwtProvider jwtProvider;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserService userService;
 
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.addFilterBefore(corsFilter,
                              CorsFilter.class)
-            .addFilterBefore(new JwtTokenFilter(jwtProvider, userDetailsService),
+            // .addFilterBefore(new JwtTokenFilter(jwtProvider, userDetailsService),
+            //                  UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtTokenFilter(jwtProvider, userService),
                              UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable)
             // Indicate that i am in a stateless application. No need to handle the session
