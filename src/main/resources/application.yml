@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+aws:
+  access:
+    key: ${YOUR_ACCESS_KEY}
+  secret:
+    key: ${YOUR_SECRET_KEY}
+  cognito:
+    clientId: ${YOUR_CLIENT_ID}
+    userPoolId: ${YOUR_USER_POOL_ID}
+    region: ${YOUR_REGION}
+    connectionTimeout: 2000
+    readTimeout: 2000
+    identityPoolUrl: https://cognito-idp.${YOUR_REGION}.amazonaws.com/${YOUR_USER_POOL_ID}
+    jwk: https://cognito-idp.${YOUR_REGION}.amazonaws.com/${YOUR_USER_POOL_ID}/.well-known/jwks.json
+    issuer: https://cognito-idp.${YOUR_REGION}.amazonaws.com/${YOUR_USER_POOL_ID}
+
+spring:
+  profiles:
+    active: dev
+---
+spring:
+  application:
+    name: apirest_dev
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: ${POSTGRES_DB_DEV}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASS}
+  jpa:
+    database: postgresql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+---
+spring:
+  application:
+    name: apirest_prod
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${POSTGRES_DB_PROD}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASS}
+  jpa:
+    database: postgresql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
