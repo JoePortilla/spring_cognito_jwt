@@ -2,6 +2,8 @@ package co.cuencas.usersadmin.security;
 
 import co.cuencas.usersadmin.security.jwt.JwtEntryPoint;
 import co.cuencas.usersadmin.security.jwt.JwtProvider;
+import co.cuencas.usersadmin.security.jwt.JwtTokenFilter;
+import co.cuencas.usersadmin.security.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,21 +23,21 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class MainSecurity {
     private final CorsFilter corsFilter;
-    // private final JwtEntryPoint jwtEntryPoint;
-    // private final JwtProvider jwtProvider;
-    // private final UserDetailsServiceImpl userDetailsService;
+    private final JwtEntryPoint jwtEntryPoint;
+    private final JwtProvider jwtProvider;
+    private final UserDetailsServiceImpl userDetailsService;
 
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.addFilterBefore(corsFilter,
                              CorsFilter.class)
-            // .addFilterBefore(new JwtTokenFilter(jwtProvider, userDetailsService),
-            //                  UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtTokenFilter(jwtProvider, userDetailsService),
+                             UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable)
             // Indicate that i am in a stateless application. No need to handle the session
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            // .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtEntryPoint))
+            .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtEntryPoint))
             .authorizeHttpRequests((requests) -> requests
                                            // Make the login endpoint public
                                            .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()

@@ -5,6 +5,8 @@ import co.cuencas.usersadmin.security.dto.SignUpDto;
 import co.cuencas.usersadmin.security.entity.UserApp;
 import co.cuencas.usersadmin.security.enums.Role;
 import co.cuencas.usersadmin.security.repository.UserRepository;
+import co.cuencas.usersadmin.security.service.UseCase.RoleService;
+import co.cuencas.usersadmin.security.service.UseCase.UserService;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.*;
 import lombok.RequiredArgsConstructor;
@@ -28,22 +30,18 @@ public class UserServiceImpl implements UserService {
     private String clientId;
 
     @Override
-    public void createUser(UserApp user) {
-        userRepository.save(user);
-    }
-
-    @Override
     public void signUpUser(SignUpDto signUpDto) {
-        AttributeType attributeType = new AttributeType().withName("email")
-                                                         .withValue(signUpDto.getEmail());
-
         // Generate register request
         SignUpRequest signUpRequest = new SignUpRequest();
+        // Build email attribute
+        AttributeType attributeType = new AttributeType().withName("email")
+                                                         .withValue(signUpDto.getEmail());
+        // Fill the register request
         signUpRequest.withClientId(clientId)
                      .withUsername(signUpDto.getIdentification())
                      .withPassword(signUpDto.getPassword())
                      .withUserAttributes(attributeType);
-        // Pass register request to cognito
+        // Send register request to cognito
         awsCognitoIdentityProvider.signUp(signUpRequest);
 
         // Create new user for save it in our db
@@ -57,7 +55,7 @@ public class UserServiceImpl implements UserService {
         user.setOrganization(signUpDto.getOrganization());
         user.setUserRole(roleService.findByRole(Role.ROLE_USER).get());
         // Save in db
-        createUser(user);
+        userRepository.save(user);
     }
 
     @Override
@@ -79,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserApp> findUserByIdentification(String userIdentification) {
+    public Optional<UserApp> getUserByIdentification(String userIdentification) {
         return userRepository.findByIdentification(userIdentification);
     }
 }

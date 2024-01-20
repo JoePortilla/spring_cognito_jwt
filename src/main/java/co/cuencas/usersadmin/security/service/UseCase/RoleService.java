@@ -1,4 +1,4 @@
-package co.cuencas.usersadmin.security.service;
+package co.cuencas.usersadmin.security.service.UseCase;
 
 import co.cuencas.usersadmin.security.entity.UserRole;
 import co.cuencas.usersadmin.security.enums.Role;
