@@ -18,11 +18,8 @@ public class UserRole {
     @Column(name = "user_role_id")
     private Long userRoleId;
 
-    // @Column(name = "role", unique = true, nullable = false)
-    // private String role;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
+    @Column(name = "role", unique = true, nullable = false)
     private Role role;
 
     @Column(name = "description")

@@ -13,16 +13,16 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class JwtProvider {
-    @Value(value = "${aws.cognito.identityPoolUrl}")
+    @Value("${aws.cognito.identityPoolUrl}")
     private String identityPoolUrl;
 
-    @Value(value = "${aws.cognito.region}")
+    @Value("${aws.cognito.region}")
     private String region;
 
-    @Value(value = "${aws.cognito.issuer}")
+    @Value("${aws.cognito.issuer}")
     private String issuer;
 
-    @Value(value = "${aws.cognito.jwk}")
+    @Value("${aws.cognito.jwk}")
     private String jwtUrl;
 
     // Name of the claim in the payload (i.e.: "username": "108533294")
@@ -36,7 +36,7 @@ public class JwtProvider {
      */
     public boolean validateToken(String token) {
         try {
-            // Get a verified and decoded JWT
+            // Verify JWT
             decodeAndVerifyJwt(token);
             // If the JWT is valid return true
             return true;
@@ -58,18 +58,18 @@ public class JwtProvider {
         DecodedJWT decodedJWT = decodeAndVerifyJwt(token);
         // Get the attribute USERNAME from the claim (i.e.: identification) and convert to string
         String userName = decodedJWT.getClaim(USERNAME).toString();
-        // Delete the quotation mark in the attribute "username"
+        // Delete the quotation marks in the attribute "username"
         return userName.replace("\"", "");
     }
 
     /**
-     * Decode JWT to verify it and obtain the information.
+     * Decode JWT to verify it
      *
      * @param token JWT
      * @return A verified and decoded JWT
      */
     public DecodedJWT decodeAndVerifyJwt(String token) {
-        // Split the String and remove Bearer (if exists)
+        // If "Bearer " exists -> Split the String and remove it
         String tokenWithoutBearer = token.startsWith("Bearer ") ? token.substring("Bearer ".length()) : token;
         // Obtain the URL of the provider
         RSAKeyProvider keyProvider = new AwsCognitoRSAKeyProvider(jwtUrl, region, identityPoolUrl);
